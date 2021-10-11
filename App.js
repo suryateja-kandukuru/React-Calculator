@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View , StatusBar, Dimensions, SafeAreaView} from 'react-native';
+import { StyleSheet, StatusBar, SafeAreaView} from 'react-native';
 import Calculator from './components/Calculator';
 
 export default function App() {
@@ -7,6 +7,7 @@ export default function App() {
   
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="black" />
       <Calculator />
     </SafeAreaView>
   );
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
     color: '#fff',
-    marginTop: StatusBar.currentHeight,
+   // marginTop: StatusBar.currentHeight,
     padding: 10
   }
 });

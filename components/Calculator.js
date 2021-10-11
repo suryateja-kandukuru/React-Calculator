@@ -1,35 +1,90 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import KeypadBtn from '../components/Button'
 import InvertibleScrollView from 'react-native-invertible-scroll-view'
 
 export default function Calculator() {
     const [expression, setExpression] = useState('')
+    const [previous, setPrevious] = useState('')
 
     const handelChange = (eve) => {
-        setExpression(expression + eve)
+
+        const allowedFirst = [1,2,3,4,5,6,7,8,9,0, '+', '-']
+        const allowedNext = [1,2,3,4,5,6,7,8,9,0, '+', '-', '*', '/', '.', '%']
+        const operators = ['/', '*', '%', '.', '+', '-']
+        if(expression !== 'Error') { 
+          if((expression.length === 0 && checkEve(eve, allowedFirst)) ){
+              setExpression(eve)
+          } 
+          if ( (expression.length === 1 && checkEve(eve, allowedFirst))) {
+            const last = expression[expression.length - 1]
+            if((last === '+' && eve === '-') || (last === '-' && eve === '+')) {
+                setExpression(expression.slice(0,-1)+eve)
+            } else {
+                setExpression(expression+eve)
+            }
+          }
+          if(expression.length >=2 && checkEve(eve, allowedNext)) {
+              const last = expression[expression.length - 1]
+              if(checkEve(last, operators) && checkEve(eve, operators)) {
+                  setExpression(expression.slice(0,-1)+eve)
+              } else {
+                  setExpression(expression+eve)
+              }
+          
+          }
+            
+          
+        }
+
+    }
+
+    const checkEve = (eve, data) => {
+        return data.some((x) => eve === x.toString())
     }
 
     const clearResult = () => {
         setExpression('')
+        setPrevious('')
     }
 
     const delInput = () => {
-        setExpression(expression.toString().slice(0, -1))
+        if(expression === 'Error') {
+            setExpression('')
+            setPrevious(expression[expression.length-1])
+        } else {
+            setExpression(expression.toString().slice(0, -1))
+        }
     }
 
     const evaluateResult = () => {
         const operators = ['/', '*', '-', '+', '%', '.']
-        if(expression !== '') {
-        if (operators.includes(expression[expression.length - 1])) {
-            const validatedResult = expression.slice(0, -1)
-            const result = eval(validatedResult)
-            setExpression(String(result))
-        } else {
-            const result = eval(expression)
-            setExpression(String(result))
+        
+        if(expression !== 'Error') {
+            if(expression !== '' && !operators.includes(expression)) {
+                try {
+                    if (operators.includes(expression[expression.length - 1])) {
+                        const validatedResult = expression.slice(0, -1)
+                        const result = eval(validatedResult)
+                        if(result) {
+                            setExpression(String(result))
+                        } else {
+                            setExpression('error')
+                        }
+                    } else {
+                        const result = eval(expression)
+                        setExpression(String(result))
+                    }
+                }
+                catch(err) {
+                    setExpression('Error')
+                    console.log('Error')
+                }
+               
+            }
         }
-        }
+
+       
     }
 
     return (
@@ -119,7 +174,7 @@ const styles = StyleSheet.create({
     },
     keypad: {
         paddingTop: 10,
-        paddingBottom: 10,
+        paddingBottom: 2,
         backgroundColor: 'black',
         height: '80%',
        // flex: 4,
@@ -128,7 +183,7 @@ const styles = StyleSheet.create({
     },
     keypadButton: {
         // flex: 0.5,
-        width: '90%',
+        width: '88%',
         height: '86%',
         textAlign: 'center',
         backgroundColor: '#343a40',
@@ -139,7 +194,7 @@ const styles = StyleSheet.create({
     },
     keypadEqualsBtn: {
         backgroundColor: '#e63946',
-        width: '90%',
+        width: '88%',
         height: '94%',
         textAlign: 'center',
         borderRadius: 150,
@@ -155,7 +210,7 @@ const styles = StyleSheet.create({
     },
     darKBtn: {
         backgroundColor: '#e63946',
-        width: '90%',
+        width: '88%',
         height: '86%',
         textAlign: 'center',
         // backgroundColor: '#343a40',
@@ -165,7 +220,7 @@ const styles = StyleSheet.create({
         fontSize: 30
     },
     keypadEqualsDarKBtn: {
-        width: '90%',
+        width: '88%',
         height: '90%',
         textAlign: 'center',
         backgroundColor: '#343a40',
