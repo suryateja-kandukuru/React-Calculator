@@ -17,9 +17,10 @@ export default function Calculator() {
               setExpression(eve)
           } 
           if ( (expression.length === 1 && checkEve(eve, allowedFirst))) {
-            const last = expression[expression.length - 1]
-            if((last === '+' && eve === '-') || (last === '-' && eve === '+')) {
-                setExpression(expression.slice(0,-1)+eve)
+            const last = expression
+            console.log('last', last)
+            if((last === '+' && (eve === '-' || eve === '+')) || (last === '-' && (eve === '-' || eve === '+'))) {
+                setExpression(eve)
             } else {
                 setExpression(expression+eve)
             }
